@@ -20,7 +20,7 @@ import "fmt"
 import "time"
 import "github.com/jsantell/go-githubstream"
 
-var TOKEN string = os.Getenv("GITHUB_ACCESS_TOKEN)
+var TOKEN string = os.Getenv("GITHUB_ACCESS_TOKEN")
 
 func main() {
   ghs := githubstream.NewGithubStream(time.Hour, "jsantell", "go-githubstream", "master", TOKEN)
