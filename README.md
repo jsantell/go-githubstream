@@ -1,4 +1,4 @@
 go-githubstream
 ===============
 
-Fetch commits from a GitHub repository periodically
+Fetch commits from a GitHub repository periodically.
