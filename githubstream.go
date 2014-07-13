@@ -8,6 +8,8 @@ import (
 	"github.com/google/go-github/github"
 )
 
+var VERSION string = "0.1.0"
+
 var githubToken string = os.Getenv("FX_DEVTOOLS_BOT_GITHUB_TOKEN")
 
 const REPO_OWNER = "mozilla"
@@ -25,7 +27,7 @@ type GithubStream struct {
 	Token     string
 }
 
-func NewGithubStream(frequency time.Duration, owner string, repo string, branch string, token string) GithubStream {
+func NewGithubStream(frequency time.Duration, owner string, repo string, branch string, token string) *GithubStream {
 	ghs := GithubStream{Frequency: frequency, Owner: owner, Repo: repo, Branch: branch, Token: token}
 	ghs.Stream = make(chan []github.RepositoryCommit)
 	ghs.Ticker = time.NewTicker(frequency)
@@ -36,27 +38,29 @@ func NewGithubStream(frequency time.Duration, owner string, repo string, branch 
 
 	ghs.Client = github.NewClient(t.Client())
 
-	return ghs
+	return &ghs
 }
 
-func (ghs GithubStream) Start() chan []github.RepositoryCommit {
+func (ghs *GithubStream) Start() chan []github.RepositoryCommit {
 	since := time.Now().Local().Add(-ghs.Frequency)
 
 	go fetch(ghs, since)
 
-	for _ = range ghs.Ticker.C {
-		since = time.Now().Local().Add(-ghs.Frequency)
-		go fetch(ghs, since)
-	}
+	go func() {
+		for _ = range ghs.Ticker.C {
+			since = time.Now().Local().Add(-ghs.Frequency)
+			fetch(ghs, since)
+		}
+	}()
 
 	return ghs.Stream
 }
 
-func (ghs GithubStream) Stop() {
+func (ghs *GithubStream) Stop() {
 	ghs.Ticker.Stop()
 }
 
-func fetch(ghs GithubStream, since time.Time) {
+func fetch(ghs *GithubStream, since time.Time) {
 
 	opts := &github.CommitsListOptions{SHA: ghs.Branch, Since: since}
 	commits, _, err := ghs.Client.Repositories.ListCommits(ghs.Owner, ghs.Repo, opts)
