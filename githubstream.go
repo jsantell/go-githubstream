@@ -25,11 +25,14 @@ func NewGithubStream(frequency time.Duration, owner string, repo string, branch 
 	ghs.Stream = make(chan []github.RepositoryCommit)
 	ghs.Ticker = time.NewTicker(frequency)
 
-	t := &oauth.Transport{
-		Token: &oauth.Token{AccessToken: ghs.Token},
+	if token != "" {
+		t := &oauth.Transport{
+			Token: &oauth.Token{AccessToken: ghs.Token},
+		}
+		ghs.Client = github.NewClient(t.Client())
+	} else {
+		ghs.Client = github.NewClient(nil)
 	}
-
-	ghs.Client = github.NewClient(t.Client())
 
 	return &ghs
 }

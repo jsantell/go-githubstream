@@ -101,3 +101,17 @@ func TestGithubStreamStart(t *testing.T) {
 		t.Error("Third call should be called 1 second after the second: %v, %v", times[1], times[2])
 	}
 }
+
+func TestAccessToken(t *testing.T) {
+	ghs := NewGithubStream(time.Second, "mozilla", "gecko-dev", "fx-team", "")
+	setup(ghs)
+	defer teardown()
+
+	mux.HandleFunc("/repos/mozilla/gecko-dev/commits", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, `[{"sha":"abcdefg"}]`)
+	})
+
+	<-ghs.Start()
+	ghs.Stop()
+	close(ghs.Stream)
+}
