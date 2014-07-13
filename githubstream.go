@@ -1,20 +1,13 @@
 package githubstream
 
 import (
-	"os"
 	"time"
 
 	"code.google.com/p/goauth2/oauth"
 	"github.com/google/go-github/github"
 )
 
-var VERSION string = "0.1.0"
-
-var githubToken string = os.Getenv("FX_DEVTOOLS_BOT_GITHUB_TOKEN")
-
-const REPO_OWNER = "mozilla"
-const REPO_NAME = "gecko-dev"
-const BRANCH = "master"
+const VERSION = "0.1.0"
 
 type GithubStream struct {
 	Stream    chan []github.RepositoryCommit
@@ -33,7 +26,7 @@ func NewGithubStream(frequency time.Duration, owner string, repo string, branch 
 	ghs.Ticker = time.NewTicker(frequency)
 
 	t := &oauth.Transport{
-		Token: &oauth.Token{AccessToken: githubToken},
+		Token: &oauth.Token{AccessToken: ghs.Token},
 	}
 
 	ghs.Client = github.NewClient(t.Client())
