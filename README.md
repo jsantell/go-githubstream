@@ -1,15 +1,20 @@
-go-githubstream [![Build Status](http://img.shields.io/travis/jsantell/go-githubstream.svg?style=flat)](https://travis-ci.org/jsantell/go-githubstream)
+go-githubstream 
 ================ 
+
+[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](http://godoc.org/github.com/jsantell/go-githubstream) [![Build Status](http://img.shields.io/travis/jsantell/go-githubstream.svg?style=flat)](https://travis-ci.org/jsantell/go-githubstream)
 
 Fetch commits from a GitHub repository periodically. Uses [go-github](https://github.com/google/go-github) under the hood.
 
-[Documentation](http://godoc.org/github.com/jsantell/go-githubstream) [![GoDoc](http://img.shields.io/badge/go-doc-blue.svg?style=flat)](http://godoc.org/github.com/jsantell/go-githubstream)
 
 ## Installation
 
 ```
 $ go get github.com/jsantell/go-githubstream
 ```
+
+## Documentation
+
+Document can be found on [GoDoc](http://godoc.org/github.com/jsantell/go-githubstream)
 
 ## Example
 
