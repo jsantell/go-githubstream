@@ -10,15 +10,21 @@ import (
 const VERSION = "0.2.0"
 
 type GithubStream struct {
-	Stream    chan []github.RepositoryCommit
-	Client    *github.Client
-	Ticker    *time.Ticker
+	Stream chan []github.RepositoryCommit
+	Client *github.Client
+	Ticker *time.Ticker
+	Owner  string
+	Repo   string
+	Branch string
+	Token  string
+
+	// How often the Github repository should be queried.
 	Frequency time.Duration
-	Since     time.Duration
-	Owner     string
-	Repo      string
-	Branch    string
-	Token     string
+
+	// From when should the commits be fetched; a `Since` of 8 hours
+	// indicates that on every query, get all commits from 8 hours ago
+	// up to the current time.
+	Since time.Duration
 }
 
 func NewGithubStream(frequency time.Duration, since time.Duration, owner string, repo string, branch string, token string) *GithubStream {
