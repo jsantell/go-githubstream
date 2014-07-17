@@ -28,9 +28,10 @@ import "github.com/jsantell/go-githubstream"
 var TOKEN string = os.Getenv("GITHUB_ACCESS_TOKEN")
 
 func main() {
-  ghs := githubstream.NewGithubStream(time.Hour, "jsantell", "go-githubstream", "master", TOKEN)
+  ghs := githubstream.NewGithubStream(time.Hour, time.Hour * 10, "jsantell", "go-githubstream", "master", TOKEN)
 
-  // This fetches the github repo `jsantell/go-githubstream` once an hour
+  // This fetches the github repo `jsantell/go-githubstream` once an hour,
+  // fetching commits from that point to 10 hours prior,
   // and prints the commits
   for commits := range ghs.Start() {
     fmt.Println(commits)

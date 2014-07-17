@@ -35,7 +35,8 @@ func teardown() {
 
 func TestConstructorAssignment(t *testing.T) {
 	frequency := time.Hour * 5
-	ghs := NewGithubStream(frequency, "mozilla", "gecko-dev", "fx-team", "abcdefgh")
+	since := time.Hour * 20
+	ghs := NewGithubStream(frequency, since, "mozilla", "gecko-dev", "fx-team", "abcdefgh")
 
 	if ghs.Owner != "mozilla" {
 		t.Error("`Owner` property not correctly set.")
@@ -55,7 +56,9 @@ func TestConstructorAssignment(t *testing.T) {
 }
 
 func TestGithubStreamStart(t *testing.T) {
-	ghs := NewGithubStream(time.Second, "mozilla", "gecko-dev", "fx-team", "abcdefgh")
+	freq := time.Second
+	scope := time.Hour * 5
+	ghs := NewGithubStream(freq, scope, "mozilla", "gecko-dev", "fx-team", "abcdefgh")
 	setup(ghs)
 	defer teardown()
 
@@ -100,10 +103,16 @@ func TestGithubStreamStart(t *testing.T) {
 	if !times[1].Add(time.Second).Equal(times[2]) {
 		t.Error("Third call should be called 1 second after the second: %v, %v", times[1], times[2])
 	}
+
+	for tick := range times {
+		if !times[tick].Add(time.Hour * 4).Before(time.Now().Local()) {
+			t.Error("call &v did not have a `since` of 5 hours", tick)
+		}
+	}
 }
 
 func TestAccessToken(t *testing.T) {
-	ghs := NewGithubStream(time.Second, "mozilla", "gecko-dev", "fx-team", "")
+	ghs := NewGithubStream(time.Second, time.Hour, "mozilla", "gecko-dev", "fx-team", "")
 	setup(ghs)
 	defer teardown()
 

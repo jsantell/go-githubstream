@@ -7,21 +7,22 @@ import (
 	"github.com/google/go-github/github"
 )
 
-const VERSION = "0.1.0"
+const VERSION = "0.2.0"
 
 type GithubStream struct {
 	Stream    chan []github.RepositoryCommit
 	Client    *github.Client
 	Ticker    *time.Ticker
 	Frequency time.Duration
+	Since     time.Duration
 	Owner     string
 	Repo      string
 	Branch    string
 	Token     string
 }
 
-func NewGithubStream(frequency time.Duration, owner string, repo string, branch string, token string) *GithubStream {
-	ghs := GithubStream{Frequency: frequency, Owner: owner, Repo: repo, Branch: branch, Token: token}
+func NewGithubStream(frequency time.Duration, since time.Duration, owner string, repo string, branch string, token string) *GithubStream {
+	ghs := GithubStream{Frequency: frequency, Since: since, Owner: owner, Repo: repo, Branch: branch, Token: token}
 	ghs.Stream = make(chan []github.RepositoryCommit)
 	ghs.Ticker = time.NewTicker(frequency)
 
@@ -38,13 +39,13 @@ func NewGithubStream(frequency time.Duration, owner string, repo string, branch 
 }
 
 func (ghs *GithubStream) Start() chan []github.RepositoryCommit {
-	since := time.Now().Local().Add(-ghs.Frequency)
+	since := time.Now().Local().Add(-ghs.Since)
 
 	go fetch(ghs, since)
 
 	go func() {
 		for _ = range ghs.Ticker.C {
-			since = time.Now().Local().Add(-ghs.Frequency)
+			since = time.Now().Local().Add(-ghs.Since)
 			fetch(ghs, since)
 		}
 	}()
